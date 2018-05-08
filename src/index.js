@@ -16,7 +16,8 @@ const app = dva();
 app.use(createLoading());
 
 // 3. Model
-
+app.model(require("./models/Fruit/Fruit"))
+app.model(require("./models/Fruit/FruitForm"))
 // 4. Router
 app.router(require('./router'));
 
