@@ -44,7 +44,7 @@ function TableSample({ dispatch }) {
     )
     const columns = [
         {
-            title: '编号',//
+            title: '编号',
             width: "20%",
             dataIndex: 'id',
             key: 'id',
