@@ -11,6 +11,12 @@ function MainLayout({ children, location, t }) {
                 key:"/",
                 link:"/",
                 iconType:'bars',
+            },
+            {
+                name:"Table Sample",
+                key:"/table",
+                link:"/table",
+                iconType:'bars',
             }
         ]
     };
