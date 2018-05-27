@@ -20,21 +20,24 @@ const codeMessage = {
 };
 
 function checkStatus(response) {
-  if (response.status == 204){
-    return {data:204}
-  }
-  if (response.status >= 200 && response.status < 300) {
+  if ((response.status >= 200 && response.status < 300) || response.status == 404) {
     return response;
   }
-  
+
   const errortext = codeMessage[response.status] || response.statusText;
-  message.error('请求错误 $'+response.status+':' + response.url+'  ' + errortext,10);
+  message.error('请求错误 $' + response.status + ':' + response.url + '  ' + errortext, 10);
   throw new Error(errortext);
-  
+
 }
 
 function parseJSON(response) {
-  return response.json();
+  if (response.status == 204) {
+    return { status: response.status }
+  } if (response.status == 404) {
+    return { raw: response.json(), status: response.status }
+  } else {
+    return response.json();
+  }
 }
 
 /**
@@ -45,25 +48,31 @@ function parseJSON(response) {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, options) {
-  if (options.method == "PUT" || options.method == "DELETE"){
-    return fetch(url, options)
-    .then(checkStatus)
-  }
   return fetch(url, options)
     .then(checkStatus)
     .then(parseJSON)
     .then(data => {
+      console.log(data)
       if (data && data instanceof Object) {
-        const{result,success,error}=data
-        if(success==true){
-          return Promise.resolve({data});
-        }else{
-          if(error&&error instanceof Object){
-            message.error("服务器内部错误."+JSON.stringify(error),10);
-            throw new Error("服务器内部错误.");
-          }else{
-            message.error("服务器内部错误.",10);
-            throw new Error("服务器内部错误.");
+        if (data.status == 404) {
+          return data.raw.then(d => {
+            d.success = true
+            return { data: d }
+          })
+        } else if (data.status == 204) {
+          return { data: { success: true } }
+        } else {
+          const { result, success, error } = data
+          if (success == true) {
+            return Promise.resolve({ data });
+          } else {
+            if (error && error instanceof Object) {
+              message.error(error.message, 10);
+              throw new Error("服务器内部错误.");
+            } else {
+              message.error("服务器内部错误.", 10);
+              throw new Error("服务器内部错误.");
+            }
           }
         }
       }

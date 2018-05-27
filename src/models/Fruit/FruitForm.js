@@ -16,17 +16,21 @@ export default {
   effects: {
     *new({ payload: values }, { call, put }) {
       const { data, headers } = yield call(fruitService.createFruit, values);
-      yield put(routerRedux.push('/fruit'));
+      if (data != undefined && data.success){
+        yield put(routerRedux.push('/fruit'));
+      }
     },
     *edit({ payload: values }, { call, put }) {
       const { data, headers } = yield call(fruitService.updateFruit,values);
-      if (data ==204){
+      if (data.success){
         yield put(routerRedux.push('/fruit'));
       }
     },
     *delete({ payload: values }, { call, put }) {
       const { data, headers } = yield call(fruitService.deleteFruit, values);
-      yield put(routerRedux.push('/fruit'));
+      if (data.success){
+        yield put(routerRedux.push('/fruit'));
+      }
     },
     *setState({ payload: {pageMode, record } }, { call, put }) {
       yield put({ type: 'updateState', payload: {pageMode, record } });

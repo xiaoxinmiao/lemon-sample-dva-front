@@ -17,7 +17,7 @@ export default {
   effects: {
     *fetchAll({ payload: { page = 1 } }, { call, put }) {
       const { data, headers } = yield call(fruitService.fetchAllFruit, { page });
-      if (data != undefined && data.success == true) {
+      if (data != undefined && data.success==true) {
         yield put({
           type: 'save',
           payload: {

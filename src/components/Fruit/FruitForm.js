@@ -4,7 +4,7 @@ import styles from './Fruit.less';
 import { routerRedux } from 'dva/router';
 const FormItem = Form.Item;
 
-const FruitForm = ({ dispatch, record, pageMode, form }) => {
+const FruitForm = ({ dispatch,  pageMode,record, form }) => {
     function onOkHandler(el, op) {
         form.validateFields((err, values) => {
             if (!err) {
@@ -36,7 +36,7 @@ const FruitForm = ({ dispatch, record, pageMode, form }) => {
     const onOk = onOkHandler.bind(this)
     const backHandler = onBackHandler.bind(this)
     const { getFieldDecorator } = form;
-    const { id, fruitName, path, description, visibility } = record;
+    const { id, name, path, color, price } = record;
     const formItemLayout = {
         labelCol: { span: 2 },
         wrapperCol: { span: 6 }
@@ -70,7 +70,7 @@ const FruitForm = ({ dispatch, record, pageMode, form }) => {
                     {...formItemLayout} label="名称">
                     {
                         getFieldDecorator('name', {
-                            initialValue: fruitName,
+                            initialValue: name,
                             rules: [{ required: true, message: 'Please input your name!' }],
                         })(<Input />)
                     }
@@ -79,7 +79,7 @@ const FruitForm = ({ dispatch, record, pageMode, form }) => {
                     {...formItemLayout} label="颜色">
                     {
                         getFieldDecorator('color', {
-                            initialValue: path,
+                            initialValue: color,
                             rules: [{ required: true, message: 'Please input your color!' }],
                         })(<Input />)
                     }
@@ -88,7 +88,7 @@ const FruitForm = ({ dispatch, record, pageMode, form }) => {
                     {...formItemLayout} label="价格">
                     {
                         getFieldDecorator('price', {
-                            initialValue: description,
+                            initialValue: price,
                             rules: [{ required: false, message: 'Please input your price!' }],
                         })(<Input />)
                     }
