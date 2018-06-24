@@ -17,7 +17,9 @@ app.use(createLoading());
 
 // 3. Model
 app.model(require("./models/Fruit/Fruit"))
+app.model(require("./models/Modal/A1"))
 app.model(require("./models/Table/RowSelect"))
+//
 // 4. Router
 app.router(require('./router'));
 

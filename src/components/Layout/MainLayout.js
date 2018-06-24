@@ -24,6 +24,12 @@ function MainLayout({ children, location, t }) {
                 link:"/rowSelect",
                 iconType:'bars',
             },
+            {
+                name:"ShowModal",
+                key:"/showModal",
+                link:"/showModal",
+                iconType:'bars',
+            },
         ]
     };
     

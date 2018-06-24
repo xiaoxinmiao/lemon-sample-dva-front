@@ -4,6 +4,7 @@ import FruitListRoute from './routes/Fruit/FruitList';
 import FruitRoute from './routes/Fruit/Fruit';
 import TableRoute from './routes/Table/Table';
 import RowSelectRoute from './routes/Table/RowSelect';
+import ShowModalRoute from './routes/Normal/ShowModal';
 
 function RouterConfig({ history }) {
   return (
@@ -14,6 +15,7 @@ function RouterConfig({ history }) {
         <Route path="/fruit"  component={FruitRoute} />
         <Route path="/table"  component={TableRoute} />
         <Route path="/rowSelect"  component={RowSelectRoute} />
+        <Route path="/showModal"  component={ShowModalRoute} />
       </Switch>
     </Router>
   );
