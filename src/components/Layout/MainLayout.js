@@ -13,11 +13,17 @@ function MainLayout({ children, location, t }) {
                 iconType:'bars',
             },
             {
-                name:"Table Sample",
+                name:"Table rowMerge",
                 key:"/table",
                 link:"/table",
                 iconType:'bars',
-            }
+            },
+            {
+                name:"RowSelect",
+                key:"/rowSelect",
+                link:"/rowSelect",
+                iconType:'bars',
+            },
         ]
     };
     
