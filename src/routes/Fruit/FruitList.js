@@ -1,16 +1,15 @@
 import React from 'react';
 import { connect } from 'dva';
-import styles from './Fruit.less';
-import Fruit from '../../components/Fruit/Fruit';
+import FruitList from '../../components/Fruit/FruitList';
 import MainLayout from '../../components/Layout/MainLayout';
 
 
-function FruitRouter({ location,t }) {
+function FruitListRoute({ location,t }) {
     return (
         <MainLayout location={location}>
-            <Fruit/>
+            <FruitList/>
         </MainLayout>
     )
 }
 
-export default connect()(FruitRouter);
+export default connect()(FruitListRoute);

@@ -7,9 +7,9 @@ function MainLayout({ children, location, t }) {
         selectedKey:location.pathname,
         items:[
             {
-                name:"Fruit",
-                key:"/",
-                link:"/",
+                name:"FruitList",
+                key:"/fruitList",
+                link:"/fruitList",
                 iconType:'bars',
             },
             {

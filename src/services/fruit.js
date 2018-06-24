@@ -4,17 +4,23 @@ import { PAGE_SIZE } from '../constants';
 import { backendAddr } from '../utils/config';
 
 
-export function fetchAllFruit({ page = 1 }) {
+export function fetchAllFruit({ page = 1, values }) {
+    const { name } = values ? values : {}
     let skipCount = 0
     if (page > 1) {
         skipCount = (page - 1) * PAGE_SIZE
     }
-    return request(backendAddr.sample + `/fruits?maxResultCount=${PAGE_SIZE}&skipCount=${skipCount}`, { method: 'GET' })
+    if (name) {
+        return request(backendAddr.sample + `/fruits?name=${name}&maxResultCount=${PAGE_SIZE}&skipCount=${skipCount}`, { method: 'GET' })
+    } else {
+        return request(backendAddr.sample + `/fruits?maxResultCount=${PAGE_SIZE}&skipCount=${skipCount}`, { method: 'GET' })
+    }
 }
 
 
 export function createFruit(values) {
     values.id = parseInt(values.id)
+    values.price = parseInt(values.price)
     return request(backendAddr.sample + '/fruits', {
         method: 'POST',
         headers: {
@@ -25,6 +31,7 @@ export function createFruit(values) {
 }
 
 export function updateFruit(values) {
+    values.price = parseInt(values.price)
     return request(backendAddr.sample + `/fruits/${values.id.toString()}`, {
         method: 'PUT',
         headers: {
@@ -34,8 +41,8 @@ export function updateFruit(values) {
     });
 }
 
-export function deleteFruit(values) {
-    return request(backendAddr.sample + `/fruits/${values.id.toString()}`, {
+export function deleteFruit(id) {
+    return request(backendAddr.sample + `/fruits/${id.toString()}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -43,8 +50,8 @@ export function deleteFruit(values) {
     });
 }
 
-export function fetchFruitByFruitId(values) {
-    return request(backendAddr.sample + `/fruits/${values}/fruits`, {
+export function getFruit(id) {
+    return request(backendAddr.sample + `/fruits/${id.toString()}?full=${true}`, {
         method: 'GET',
     });
 }

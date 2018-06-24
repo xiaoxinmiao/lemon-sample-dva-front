@@ -1,116 +1,156 @@
-import React, { Component } from 'react';
-import { Link } from 'dva/router';
-import { PAGE_SIZE } from '../../constants';
 import { connect } from 'dva';
-import { Badge,Table,Popconfirm ,Button,Icon} from 'antd';
-import { routerRedux } from 'dva/router';
+import { Button, Form, Input, Layout, Row, Card, message } from 'antd';
 import styles from './Fruit.less';
+import { routerRedux, withRouter } from 'dva/router';
 import queryString from 'query-string';
+const FormItem = Form.Item
+const Content = Layout.Content
 
-function Fruit({dispatch,loading,list,total, page: current }) {
-  function pageChangeHandler(page) {
-    dispatch(routerRedux.push({
-      pathname: '/fruit',
-      search: queryString.stringify({ page:page }),
-    }));
-  }
-  
-  function onCreateHandler(record) {
-    dispatch(routerRedux.push({
-      pathname: '/fruitForm',
-      record,
-      pageMode:"new",
-    }));
-  }
+const Fruit = ({ dispatch, pageMode, currentFruit, form }) => {
+    const { getFieldDecorator, setFieldsValue, getFieldValue } = form ? form : {};
 
-  function onEditHandler(record) {
-    dispatch(routerRedux.push({
-      pathname: '/fruitForm',
-      record,
-      pageMode:"edit",
-    }));
-  }
-
-  function onDeleteHandler(record) {
-    dispatch({
-      type: 'fruitForm/delete',
-      payload: record
-  });
-  }
-  const onCreate = onCreateHandler.bind(this)
-  const onEdit = onEditHandler.bind(this)
-  const onDelete = onDeleteHandler.bind(this)
-
-  const columns = [
-    { title: '编号',//
-      width: 100,
-      dataIndex: 'id',
-      fixed: 'left'
-    },
-    { title: '名字',//
-      dataIndex: 'name',
-      fixed: 'left'
-    },
-    { title: '颜色', dataIndex: 'color' },//
-    { title: '价格', dataIndex: 'price' },//
-    {
-      title: '操作',//
-      dataIndex: 'operation',
-      fixed: 'right',
-      width: 200,
-      render: (text, record) => (
-        <span className={styles.operation}>
-          <a onClick={()=>{onEdit(record)}}>Edit</a>
-          <Popconfirm title="Confirm to delete?" onConfirm={()=>{onDelete(record)}}>
-            <a href="">Delete</a>
-          </Popconfirm>
-        </span>
-      ),
-    },
-  ];
-
-  let newDatas = list.map(
-    (data, index) => {
-        data.key = index;
-        // data add a new property
-        return data;
+    const { id, name, color, price, storeName } = currentFruit ? currentFruit : {};
+    function onBack() {
+        dispatch(routerRedux.goBack());
     }
-  );
+    function onSave() {
+        form.validateFields((err, formValues) => {
+            if (err) {
+                return
+            }
+            let path = 'fruit/new'
+            let values = {
+                name: formValues.name,
+                color: formValues.color,
+                price: formValues.price,
+            }
+            if (pageMode === 'edit') {
+                path = 'fruit/edit'
+                values = {
+                    ...values,
+                    id: formValues.id,
+                }
+            }
+            dispatch({
+                type: path,
+                payload: values,
+                onComplete: (data) => {
+                    if (data && data.success) {
+                        message.success("Save success.")
+                        dispatch(routerRedux.push({
+                            pathname: '/fruitList',
+                            pageMode: 'reload',
+                        }))
+                    } else {
+                        let errMsg = data && data.error && data.error.message
+                        message.error("Save failure:" + errMsg)
+                    }
+                },
+            });
+        });
+    }
 
-  const pagination = {
-    // className : "order-alarm-table-pagination",
-    total : total,
-    current : current,
-    pageSize : PAGE_SIZE,
-    onChange : pageChangeHandler,
-  };
-
-  return (
-    <div className={styles['fruit-table']}>
-      <h2>
-        Fruit table
-      </h2>
-      <div>
-          <Button className={styles.create} type="primary" onClick={onCreate}><Icon type="plus"/>Create</Button>
-        </div>
-      <Table columns={columns} dataSource={newDatas}
-      loading={loading}
-      rowKey={row => row.key}
-      pagination={pagination}
-      scroll={{ x: 1300 }} />
-    </div>
-  );
-
+    const formItemLayout = {
+        labelCol: {
+            xs: { span: 24 },
+            sm: { span: 6 },
+        },
+        wrapperCol: {
+            xs: { span: 24 },
+            sm: { span: 16 },
+        },
+    };
+    return (
+        <Content>
+            <div>
+                <Row>
+                    <Card bodyStyle={{
+                        padding: '0.4rem 2.4rem'
+                    }}>
+                        <Button style={{ borderWidth: '0rem' }} icon="left-circle-o" onClick={() => onBack()} >返回</Button>
+                        <Button style={{ marginLeft: '1rem', textAlign: 'right' }} type="primary" onClick={() => onSave()}>保存</Button>
+                    </Card>
+                </Row>
+                <Row style={{ marginTop: '1rem' }}>
+                    <Card>
+                        <div
+                            style={{
+                                fontSize: 14,
+                                marginBottom: '1rem',
+                                fontWeight: 500,
+                            }}
+                        >
+                            <Form>
+                                <FormItem label='storeName' {...formItemLayout}
+                                >{
+                                        getFieldDecorator(`storeName`, {
+                                            initialValue: storeName,
+                                        })(
+                                            <span>{storeName}</span>
+                                        )}
+                                </FormItem>
+                                <FormItem label='name' {...formItemLayout}
+                                >{
+                                        getFieldDecorator(`name`, {
+                                            initialValue: name,
+                                            rules: [{
+                                                required: true,
+                                                message: 'name is required!',
+                                            }],
+                                        })(
+                                            <Input placeholder="Please enter the name" />
+                                        )}
+                                </FormItem>
+                                <FormItem label='color' {...formItemLayout}
+                                >{
+                                        getFieldDecorator(`color`, {
+                                            initialValue: color,
+                                            rules: [{
+                                                required: true,
+                                                message: 'color is required!',
+                                            }],
+                                        })(
+                                            <Input placeholder="Please enter the color" />
+                                        )}
+                                </FormItem>
+                                <FormItem label='price' {...formItemLayout}
+                                >{
+                                        getFieldDecorator(`price`, {
+                                            initialValue: price,
+                                            rules: [{
+                                                required: true,
+                                                message: 'price is required!',
+                                            }],
+                                        })(
+                                            <Input placeholder="Please enter the price" />
+                                        )}
+                                </FormItem>
+                                <FormItem  {...formItemLayout}
+                                >{
+                                        getFieldDecorator(`id`, {
+                                            initialValue: id,
+                                        })(
+                                            <Input hidden={true} />
+                                        )}
+                                </FormItem>
+                            </Form>
+                        </div>
+                    </Card>
+                </Row>
+            </div>
+        </Content>
+    );
 }
 
-function mapStateToProps(state) {
-  const {loading, list, total, page } = state.fruit;
-  return {
-    loading: state.loading.models.fruit,
-    list,
-    total,
-    page,
-  };
+const fruitFrom = Form.create()(Fruit)
+
+function mapStateToProps(state, ownProps) {
+    const { currentFruit } = state.fruit;
+    const search = ownProps && ownProps.location && ownProps.location.search ? queryString.parse(ownProps.location.search) : {}
+    return {
+        pageMode: search.pageMode ? search.pageMode : '',
+        currentFruit,
+    };
 }
 
-export default connect(mapStateToProps)(Fruit)
+export default withRouter(connect(mapStateToProps)(fruitFrom))
